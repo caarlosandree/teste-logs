@@ -3,12 +3,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Play, Square, Activity, Zap, TrendingUp, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Badge } from '@/components/ui/badge'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { useLogStatus } from '@/hooks/queries'
 import { useStartLogs, useStopLogs, useUpdateLogRate } from '@/hooks/mutations'
 import { updateRateSchema, type UpdateRateFormData } from '@/schemas/logSchema'
@@ -16,7 +13,7 @@ import { LogsPerSecondChart } from './LogsPerSecondChart'
 import { cn } from '@/lib/utils'
 
 export const LogController = () => {
-  const { data: status, isLoading: statusLoading } = useLogStatus()
+  const { data: status } = useLogStatus()
   const startMutation = useStartLogs()
   const stopMutation = useStopLogs()
   const updateRateMutation = useUpdateLogRate()
