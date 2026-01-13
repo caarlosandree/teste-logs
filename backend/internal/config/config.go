@@ -27,9 +27,9 @@ func LoadConfig() (*Config, error) {
 	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err != nil {
-		return nil, err
-	}
+	// Tenta ler o arquivo .env, mas não falha se não existir (útil para produção)
+	// Em produção (Railway, etc), as variáveis vêm apenas das variáveis de ambiente
+	_ = viper.ReadInConfig()
 
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
