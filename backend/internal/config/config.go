@@ -1,6 +1,8 @@
 package config
 
 import (
+	"strings"
+
 	"github.com/spf13/viper"
 )
 
@@ -8,10 +10,15 @@ type Config struct {
 	Server       ServerConfig
 	Log          LogConfig
 	LogGenerator LogGeneratorConfig
+	CORS         CORSConfig
 }
 
 type ServerConfig struct {
 	Port string `mapstructure:"SERVER_PORT"`
+}
+
+type CORSConfig struct {
+	AllowedOrigins []string `mapstructure:"CORS_ALLOWED_ORIGINS"`
 }
 
 type LogConfig struct {
@@ -36,6 +43,16 @@ func LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
+	// Processa CORS_ALLOWED_ORIGINS se for uma string separada por vírgulas
+	if corsOrigins := viper.GetString("CORS_ALLOWED_ORIGINS"); corsOrigins != "" {
+		origins := strings.Split(corsOrigins, ",")
+		// Remove espaços em branco de cada origem
+		for i, origin := range origins {
+			origins[i] = strings.TrimSpace(origin)
+		}
+		config.CORS.AllowedOrigins = origins
+	}
+
 	setDefaults(&config)
 
 	return &config, nil
@@ -53,5 +70,14 @@ func setDefaults(config *Config) {
 	}
 	if config.LogGenerator.RatePerSecond == 0 {
 		config.LogGenerator.RatePerSecond = 2000
+	}
+	// Default CORS origins (desenvolvimento local)
+	if len(config.CORS.AllowedOrigins) == 0 {
+		config.CORS.AllowedOrigins = []string{
+			"http://localhost:5173",
+			"http://localhost:3000",
+			"http://127.0.0.1:5173",
+			"http://127.0.0.1:3000",
+		}
 	}
 }
